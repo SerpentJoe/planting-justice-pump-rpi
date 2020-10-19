@@ -1,0 +1,217 @@
+[
+    {
+        "id": "b8654d22.10d94",
+        "type": "tab",
+        "label": "Main",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "bea9b905.7300a8",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "upper_low",
+        "pin": "11",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 200,
+        "wires": [
+            [
+                "fa568e49.44c2a"
+            ]
+        ]
+    },
+    {
+        "id": "bee62863.cd9e18",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "upper_high",
+        "pin": "13",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 240,
+        "wires": [
+            [
+                "fa568e49.44c2a",
+                "268a23fe.a5e65c"
+            ]
+        ]
+    },
+    {
+        "id": "7dc06096.24215",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "lower_low",
+        "pin": "15",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 360,
+        "wires": [
+            [
+                "160bd553.3569eb",
+                "268a23fe.a5e65c"
+            ]
+        ]
+    },
+    {
+        "id": "ae2d7e8a.431a8",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "lower_high",
+        "pin": "29",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 400,
+        "wires": [
+            [
+                "160bd553.3569eb",
+                "342877ff.2cbcc8"
+            ]
+        ]
+    },
+    {
+        "id": "4ad8cf1c.61e88",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "well_low",
+        "pin": "31",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 520,
+        "wires": [
+            [
+                "687f231c.5be9fc",
+                "342877ff.2cbcc8"
+            ]
+        ]
+    },
+    {
+        "id": "da4f5ff3.8e17e",
+        "type": "rpi-gpio in",
+        "z": "b8654d22.10d94",
+        "name": "well_high",
+        "pin": "33",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 280,
+        "y": 560,
+        "wires": [
+            [
+                "687f231c.5be9fc"
+            ]
+        ]
+    },
+    {
+        "id": "922d4d4e.555b6",
+        "type": "rpi-gpio out",
+        "z": "b8654d22.10d94",
+        "name": "run_lower_pump",
+        "pin": "40",
+        "set": "",
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 870,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f0c0772c.af83e8",
+        "type": "rpi-gpio out",
+        "z": "b8654d22.10d94",
+        "name": "run_upper_pump",
+        "pin": "38",
+        "set": "",
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 870,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "fa568e49.44c2a",
+        "type": "function",
+        "z": "b8654d22.10d94",
+        "name": "upper_impossible",
+        "func": "context.set(msg.topic, msg.payload);\n\nreturn {\n    topic: 'upper_impossible',\n    payload: (context.get('upper_low') && context.get('upper_high')),\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "160bd553.3569eb",
+        "type": "function",
+        "z": "b8654d22.10d94",
+        "name": "lower_impossible",
+        "func": "context.set(msg.topic, msg.payload);\n\nreturn {\n    topic: 'lower_impossible',\n    payload: (context.get('upper_low') && context.get('upper_high')),\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "687f231c.5be9fc",
+        "type": "function",
+        "z": "b8654d22.10d94",
+        "name": "well_impossible",
+        "func": "context.set(msg.topic, msg.payload);\n\nreturn {\n    topic: 'well_impossible',\n    payload: (context.get('upper_low') && context.get('upper_high')),\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 300,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "268a23fe.a5e65c",
+        "type": "function",
+        "z": "b8654d22.10d94",
+        "name": "run_upper_pump",
+        "func": "const topic = 'run_upper_pump';\n\ncontext.set(msg.topic, msg.payload);\nconst upperHigh = (1 === context.get('upper_high'));\nconst lowerLow = (1 === context.get('lower_low'));\n// Bitwise And - cast to int\nconst payload = (!upperHigh) & (!lowerLow);\n\nreturn { topic, payload };",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 300,
+        "wires": [
+            [
+                "f0c0772c.af83e8"
+            ]
+        ]
+    },
+    {
+        "id": "342877ff.2cbcc8",
+        "type": "function",
+        "z": "b8654d22.10d94",
+        "name": "run_lower_pump",
+        "func": "const topic = 'run_lower_pump';\n\ncontext.set(msg.topic, msg.payload);\nconst lowerHigh = (1 === context.get('lower_high'));\nconst wellLow = (1 === context.get('well_low'));\n// Bitwise And - cast to int\nconst payload = (!lowerHigh) & (!wellLow);\n\nreturn { topic, payload };",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 460,
+        "wires": [
+            [
+                "922d4d4e.555b6"
+            ]
+        ]
+    }
+]
